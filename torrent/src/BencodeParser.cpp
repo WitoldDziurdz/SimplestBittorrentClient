@@ -6,6 +6,7 @@
 #include <string>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
 
 namespace parser{
 
@@ -17,6 +18,10 @@ namespace parser{
             res.push_back(pr.first);
             word = word.substr(pr.second);
         }
+        if(not word.empty()){
+            throw std::invalid_argument("Invalid string to parse: " + word);
+        }
+        std::cout << "torrent json: " << res << std::endl;
         return res;
     }
 
@@ -43,14 +48,19 @@ namespace parser{
             return {nlohmann::json(res), 2};
         }
         auto word = str.substr(1);
-        size_t index = 0;
-        while(not word.empty() and word[0] != 'e'){
+        size_t index = 1;
+        while((not word.empty())){
+            if(word[0] == 'e'){
+                break;
+            }
             auto pr = getElement(word);
             word = word.substr(pr.second); // Corrected line
             index += pr.second;
             res.push_back(pr.first);
         }
-
+        if(word[0] != 'e'){
+            throw std::invalid_argument("Invalid string to parse: " + str);
+        }
         return {nlohmann::json(res), index + 1};
     }
 
@@ -63,15 +73,21 @@ namespace parser{
             return {nlohmann::json(res), 2};
         }
         auto word = str.substr(1);
-        size_t index = 0;
-        while(not word.empty() and word[0] != 'e'){
-            auto pr1 = getString(word);
+        size_t index = 1;
+        while(not word.empty()){
+            if(word[0] == 'e'){
+                break;
+            }
+            auto pr1 = getElement(word);
             index += pr1.second;
             word = word.substr(pr1.second);
             auto pr2 = getElement(word);
             index += pr2.second;
             word = word.substr(pr2.second);
             res.insert({pr1.first.get<std::string>(), pr2.first});
+        }
+        if(word[0] != 'e'){
+            throw std::invalid_argument("Invalid string to parse: " + str);
         }
         return {nlohmann::json(res), index + 1};
     }
@@ -97,7 +113,16 @@ namespace parser{
             throw std::invalid_argument("Invalid string to parse: " + str);
         }
         ++start_it;
-        auto finish_it = str.find('e');
+        auto finish_it = start_it;
+        if(str[finish_it] == '-'){
+            ++finish_it;
+        }
+        while(isdigit(str[finish_it])){
+            ++finish_it;
+        }
+        if(str[finish_it] != 'e'){
+            throw std::invalid_argument("Invalid string to parse: " + str);
+        }
         if(finish_it == std::string::npos or finish_it == 0 or start_it == finish_it){
             throw std::invalid_argument("Invalid string to parse: " + str);
         }
@@ -105,6 +130,6 @@ namespace parser{
         if(num.size() > 1 && num[0] == '0'){
             throw std::invalid_argument("Invalid string to parse: " + str);
         }
-        return {nlohmann::json(std::stoll(num)), finish_it};
+        return {nlohmann::json(std::stoll(num)), finish_it + 1};
     }
 }

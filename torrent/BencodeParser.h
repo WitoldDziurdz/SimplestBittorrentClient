@@ -31,11 +31,11 @@ namespace parser{
         }
 
         static bool isInteger(char ch){
-            return isdigit(ch);
+            return ch == 'i';
         }
 
         static bool isList(char ch){
-            return isdigit(ch);
+            return  ch == 'l';
         }
     };
 }
