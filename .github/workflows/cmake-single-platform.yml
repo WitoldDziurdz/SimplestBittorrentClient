@@ -31,3 +31,11 @@ jobs:
       - name: Test
         working-directory: build
         run: ctest -C ${{ env.BUILD_TYPE }}
+      # New step for installing Valgrind
+      - name: Install Valgrind
+        run: sudo apt-get install -y valgrind
+
+      # New step for running tests with Valgrind
+      - name: Valgrind Test
+        working-directory: build
+        run: valgrind --leak-check=full --error-exitcode=1 ./tests/torrent_test

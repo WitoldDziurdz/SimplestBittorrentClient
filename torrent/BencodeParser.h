@@ -12,15 +12,15 @@ namespace parser{
     public:
         nlohmann::json parse(const std::string& str);
 
-        std::pair<nlohmann::json, size_t> getElement(const std::string& str);
+        std::pair<nlohmann::json, size_t> getElement(std::string_view str);
 
-        std::pair<nlohmann::json, size_t>  getString(const std::string& str);
+        std::pair<nlohmann::json, size_t>  getString(std::string_view);
 
-        std::pair<nlohmann::json, size_t> getInteger(const std::string& str);
+        std::pair<nlohmann::json, size_t> getInteger(std::string_view str);
 
-        std::pair<nlohmann::json, size_t>  getList(const std::string& str);
+        std::pair<nlohmann::json, size_t>  getList(std::string_view str);
 
-        std::pair<nlohmann::json, size_t>  getDict(const std::string& str);
+        std::pair<nlohmann::json, size_t>  getDict(std::string_view str);
 
     private:
         static bool isDict(char ch){
