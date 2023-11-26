@@ -22,7 +22,6 @@ namespace parser{
         if(not word.empty()){
             throw std::invalid_argument("Invalid string to parse: " + str);
         }
-        std::cout << "torrent json: " << res << std::endl;
         return res;
     }
 

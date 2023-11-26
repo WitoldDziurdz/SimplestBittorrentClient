@@ -22,15 +22,21 @@ jobs:
       - name: Set up CMake
         run: sudo apt-get update && sudo apt-get install -y cmake
 
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      - name: Pull LFS objects
+        run: git lfs pull
+
       - name: Build project with CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build
         run: cmake --build build --config ${{ env.BUILD_TYPE }}
 
-      - name: Test
-        working-directory: build
-        run: ctest -C ${{ env.BUILD_TYPE }}
       # New step for installing Valgrind
       - name: Install Valgrind
         run: sudo apt-get install -y valgrind
@@ -39,3 +45,7 @@ jobs:
       - name: Valgrind Test
         working-directory: build
         run: valgrind --leak-check=full --error-exitcode=1 ./tests/torrent_test
+
+      - name: Test
+        working-directory: build
+        run: ctest -C ${{ env.BUILD_TYPE }}

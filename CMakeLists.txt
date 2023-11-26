@@ -10,6 +10,7 @@ include_directories(${PROJECT_SOURCE_DIR}/torrent)
 add_executable(torrent
         torrent/main.cpp
         torrent/src/BencodeParser.cpp
+        torrent/src/Metainfo.cpp
 )
 
 # Setup Google Test
@@ -21,18 +22,20 @@ add_executable(torrent_test
         torrent/src/BencodeParser.cpp
         tests/test_main.cpp
         tests/test_BencodeParser.cpp
-        tests/test_main.cpp
+        torrent/src/Metainfo.cpp
+        tests/test_Metainfo.cpp
 )
-
 # Link your test executable with Google Test
 target_link_libraries(torrent_test gtest gtest_main)
 
 # Add the tests to be run
 add_test(NAME BencodeParserTest COMMAND torrent_test)
+add_test(NAME MetainfoTest COMMAND torrent_test)
 
 # Specify the test configuration
 set_target_properties(torrent_test PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
 )
+file(COPY ${CMAKE_SOURCE_DIR}/tests/test_data DESTINATION ${CMAKE_BINARY_DIR}/tests/)
 
 include(CTest)
